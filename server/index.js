@@ -22,7 +22,6 @@ server.applyMiddleware({ app });
 // app.get("/home", (req, res) => res.status(200).send("<head><style>html{font-family: sans-serif}</style></head><body><h1>TEST</h1></body>"))
 
 
-
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}...`);
 })

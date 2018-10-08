@@ -1,9 +1,9 @@
 const { find, filter } = require('lodash');
 
 const users = [
-  {id: 1, auth0ID: 1, email: 'test1@example.com'},
-  {id: 2, auth0ID: 2, email: 'test2@example.com'},
-  {id: 3, auth0ID: 3, email: 'test3@example.com'},
+  {id: 1, auth0ID: 1, email: 'wfukui@example.com', firstName: 'Wes', lastName: 'Fukui', userName: 'wFukui'},
+  {id: 2, auth0ID: 2, email: 'ahill@example.com', firstName: 'Alex', lastName: 'Hill', userName: 'ahill'},
+  {id: 3, auth0ID: 3, email: 'nmcarthur@example.com', firsName: 'Nick', lastName: 'McArthur', userName: 'nMcArthur'},
 ];
 
 const lists = [
@@ -46,5 +46,11 @@ module.exports = {
 
   Item: {
     list: item => find(lists, {id: item.listId}),
+  },
+
+  Mutation: {
+    addItem: (listId, name, description, details, nextItemId, pictures) => {
+      
+    }
   },
 };

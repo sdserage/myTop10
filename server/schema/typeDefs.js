@@ -2,6 +2,9 @@ module.exports = `
   type User {
     id: ID!
     auth0ID: String! # Will be changed to ID if allowed. must be unique
+    firstName: String!
+    lastName: String!
+    userName: String
     email: String! # must be unique
     lists: [List]!
   }
@@ -27,13 +30,22 @@ module.exports = `
     pictures: [String]! # could end up being its own type
   }
 
+  input ItemInput {
+    listId: ID!
+    name: String!
+    description: String!
+    details: String!
+    nextItemId: ID
+    pictures: [String]
+  }
+
   type Query {
     users: [User]
   }
 
-  # type Mutation {
-
-  # }
+  type Mutation {
+    addItem (input: ItemInput): Item
+  }
 
   schema {
     query: Query
