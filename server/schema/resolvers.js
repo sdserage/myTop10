@@ -30,6 +30,10 @@ const items = [
   {id: 12, name: 'Shark', description: '', details: '', pictures: [], nextItemId: 11},
 ];
 
+let itemId = items.length;
+let listId = lists.length;
+let userId = users.length;
+
 module.exports = {
   Query: {
     users: () => users,
@@ -49,8 +53,19 @@ module.exports = {
   },
 
   Mutation: {
-    addItem: (listId, name, description, details, nextItemId, pictures) => {
-      
+    addItem: (_, input) => {
+      const { listId, name, description, details, nextItemId, pictures } = input;
+      const item = {
+        id: ++ itemId,
+        listId,
+        name,
+        description,
+        details,
+        nextItemId,
+        pictures,
+      };
+    items.push(item);
+    return item;
     }
   },
 };
