@@ -16,18 +16,18 @@ const lists = [
 ];
 
 const items = [
-  {id: 1, name: 'Beetle', description: '', details: '', pictures: [], nextItemId: null},
-  {id: 2, name: 'Moth', description: '', details: '', pictures: [], nextItemId: 1},
-  {id: 3, name: 'Tabby', description: '', details: '', pictures: [], nextItemId: null},
-  {id: 4, name: 'Calico', description: '', details: '', pictures: [], nextItemId: 3},
-  {id: 5, name: 'German Short-haired Pointer', description: '', details: '', pictures: [], nextItemId: null},
-  {id: 6, name: 'Wire-haired Fox Terrier', description: '', details: '', pictures: [], nextItemId: 5},
-  {id: 7, name: 'Tree Frog', description: '', details: '', pictures: [], nextItemId: null},
-  {id: 8, name: 'Poison-dart Frog', description: '', details: '', pictures: [], nextItemId: 7},
-  {id: 9, name: 'Robin', description: '', details: '', pictures: [], nextItemId: null},
-  {id: 10, name: 'Crow', description: '', details: '', pictures: [], nextItemId: 9},
-  {id: 11, name: 'Piranha', description: '', details: '', pictures: [], nextItemId: null},
-  {id: 12, name: 'Shark', description: '', details: '', pictures: [], nextItemId: 11},
+  {id: 1, listId: 1, name: 'Beetle', description: '', details: '', pictures: [], nextItemId: null},
+  {id: 2, listId: 1, name: 'Moth', description: '', details: '', pictures: [], nextItemId: 1},
+  {id: 3, listId: 2, name: 'Tabby', description: '', details: '', pictures: [], nextItemId: null},
+  {id: 4, listId: 2, name: 'Calico', description: '', details: '', pictures: [], nextItemId: 3},
+  {id: 5, listId: 3, name: 'German Short-haired Pointer', description: '', details: '', pictures: [], nextItemId: null},
+  {id: 6, listId: 3, name: 'Wire-haired Fox Terrier', description: '', details: '', pictures: [], nextItemId: 5},
+  {id: 7, listId: 4, name: 'Tree Frog', description: '', details: '', pictures: [], nextItemId: null},
+  {id: 8, listId: 4, name: 'Poison-dart Frog', description: '', details: '', pictures: [], nextItemId: 7},
+  {id: 9, listId: 5, name: 'Robin', description: '', details: '', pictures: [], nextItemId: null},
+  {id: 10, listId: 5, name: 'Crow', description: '', details: '', pictures: [], nextItemId: 9},
+  {id: 11, listId: 6, name: 'Piranha', description: '', details: '', pictures: [], nextItemId: null},
+  {id: 12, listId: 6, name: 'Shark', description: '', details: '', pictures: [], nextItemId: 11},
 ];
 
 let itemId = items.length;
@@ -53,16 +53,10 @@ module.exports = {
   },
 
   Mutation: {
-    addItem: (_, input) => {
-      const { listId, name, description, details, nextItemId, pictures } = input;
+    addItem: (_, args) => {
       const item = {
         id: ++ itemId,
-        listId,
-        name,
-        description,
-        details,
-        nextItemId,
-        pictures,
+        ...args.input,
       };
     items.push(item);
     return item;
