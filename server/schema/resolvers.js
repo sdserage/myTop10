@@ -40,16 +40,16 @@ module.exports = {
   },
 
   User: {
-    lists: user => filter(lists, {userId: user.id}),
+    lists: user => filter(lists, {userId: Number(user.id)}),
   },
 
   List: {
-    author: list => find(users, {id: list.userId}),
-    items: list => filter(items, {listId: list.id}),
+    author: list => find(users, {id: Number(list.userId)}),
+    items: list => filter(items, {listId: Number(list.id)}),
   },
 
   Item: {
-    list: item => find(lists, {id: item.listId}),
+    list: item => find(lists, {id: Number(item.listId)}),
   },
 
   Mutation: {
@@ -58,8 +58,19 @@ module.exports = {
         id: ++ itemId,
         ...args.input,
       };
-    items.push(item);
-    return item;
+      items.push(item);
+      return item;
+    },
+    createList: (_, args) => {
+      const list = {
+        id: ++ listId,
+        ...args.input,
+        subCategories: [],
+        size: 10,
+      };
+      console.log(list)
+      lists.push(list);
+      return list;
     }
   },
 };

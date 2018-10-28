@@ -39,12 +39,19 @@ module.exports = `
     pictures: [String]
   }
 
+  input ListInput {
+    userId: ID!
+    title: String!
+    category: String!
+  }
+
   type Query {
     users: [User]
   }
 
   type Mutation {
     addItem (input: ItemInput): Item
+    createList (input: ListInput): List
   }
 
   schema {
