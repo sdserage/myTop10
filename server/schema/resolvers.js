@@ -3,7 +3,7 @@ const { find, filter } = require('lodash');
 const users = [
   {id: 1, auth0ID: 1, email: 'wfukui@example.com', firstName: 'Wes', lastName: 'Fukui', userName: 'wFukui'},
   {id: 2, auth0ID: 2, email: 'ahill@example.com', firstName: 'Alex', lastName: 'Hill', userName: 'ahill'},
-  {id: 3, auth0ID: 3, email: 'nmcarthur@example.com', firsName: 'Nick', lastName: 'McArthur', userName: 'nMcArthur'},
+  {id: 3, auth0ID: 3, email: 'nmcarthur@example.com', firstName: 'Nick', lastName: 'McArthur', userName: 'nMcArthur'},
 ];
 
 const lists = [
@@ -33,6 +33,7 @@ const items = [
 let itemId = items.length;
 let listId = lists.length;
 let userId = users.length;
+let auth0ID = users.length;
 
 module.exports = {
   Query: {
@@ -68,9 +69,17 @@ module.exports = {
         subCategories: [],
         size: 10,
       };
-      console.log(list)
       lists.push(list);
       return list;
-    }
+    },
+    createUser: (_, args) => {
+      const newUser = {
+        id: ++ userId,
+        auth0ID: ++ auth0ID,
+        ...args.input,
+      };
+      users.push(newUser);
+      return newUser;
+    },
   },
 };

@@ -45,6 +45,13 @@ module.exports = `
     category: String!
   }
 
+  input UserInput {
+    email: String!
+    firstName: String!
+    lastName: String!
+    userName: String!
+  }
+
   type Query {
     users: [User]
   }
@@ -52,6 +59,7 @@ module.exports = `
   type Mutation {
     addItem (input: ItemInput): Item
     createList (input: ListInput): List
+    createUser (input: UserInput): User
   }
 
   schema {
