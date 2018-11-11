@@ -1,6 +1,13 @@
 const { find, filter } = require('lodash');
 const User = require('../mongodbModels/user');
 
+function uuidv4() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+
 const users = [
   {id: 1, auth0ID: 1, email: 'wfukui@example.com', firstName: 'Wes', lastName: 'Fukui', userName: 'wFukui'},
   {id: 2, auth0ID: 2, email: 'ahill@example.com', firstName: 'Alex', lastName: 'Hill', userName: 'ahill'},
@@ -38,7 +45,12 @@ let auth0ID = users.length;
 
 module.exports = {
   Query: {
-    users: () => users,
+    users: () => User.find({})
+      .then(users => users)
+      .catch(error => {
+        console.log('An error occurred while attempting to retrieve users from MongoDB: ', error);
+        return [];
+      }),
   },
 
   User: {
@@ -73,22 +85,25 @@ module.exports = {
       lists.push(list);
       return list;
     },
-    createUser: (_, args) => {
-      const newUser = {
-        id: ++ userId,
-        auth0ID: ++ auth0ID,
-        ...args.input,
-      };
+    createUser: (_, args) => new Promise((resolve, reject) => {
+      const {
+        firstName, lastName, userName, email,
+      } = args.input;
       let user = new User({
-        firstName: 'Bob',
-        lastName: 'Parr',
+        auth0ID: uuidv4(),
+        firstName,
+        lastName,
+        userName,
+        email,
+        lists: [],
       });
-      user.save().then(() => {
-        console.log('user saved');
+      user.save()
+      .then(() => {
+        resolve(user);
+      }).catch(error => {
+        console.log('An error occurred while attempting to save a new user: ', error.message);
+        reject(error.message);
       });
-      users.push(newUser);
-
-      return newUser;
-    },
+    }),
   },
 };
