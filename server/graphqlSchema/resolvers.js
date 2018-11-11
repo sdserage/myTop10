@@ -1,4 +1,5 @@
 const { find, filter } = require('lodash');
+const User = require('../mongodbModels/user');
 
 const users = [
   {id: 1, auth0ID: 1, email: 'wfukui@example.com', firstName: 'Wes', lastName: 'Fukui', userName: 'wFukui'},
@@ -78,7 +79,15 @@ module.exports = {
         auth0ID: ++ auth0ID,
         ...args.input,
       };
+      let user = new User({
+        firstName: 'Bob',
+        lastName: 'Parr',
+      });
+      user.save().then(() => {
+        console.log('user saved');
+      });
       users.push(newUser);
+
       return newUser;
     },
   },
