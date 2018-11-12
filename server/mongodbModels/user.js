@@ -1,21 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-
-const ItemSchema = new Schema({
-  name: String,
-  description: String,
-  nextItemID: String,
-  details: String,
-  pictures: [String],
-});
-
-const ListSchema = new Schema({
-  title: String,
-  category: String,
-  subCategories: [String],
-  size: Number,
-  items: [ItemSchema],
-});
+const { ListSchema } = require('./list');
 
 const UserSchema = new Schema({
   auth0ID: String,
@@ -26,6 +11,7 @@ const UserSchema = new Schema({
   lists: [ListSchema],
 });
 
-const User = mongoose.model('user', UserSchema);
-
-module.exports = User;
+module.exports = {
+  User: mongoose.model('user', UserSchema),
+  UserSchema,
+};

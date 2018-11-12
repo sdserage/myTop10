@@ -1,12 +1,7 @@
 const { find, filter } = require('lodash');
-const User = require('../mongodbModels/user');
-
-function uuidv4() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-    return v.toString(16);
-  });
-}
+const { User } = require('../mongodbModels/user');
+const { List } = require('../mongodbModels/list');
+const uuidv4 = require('../util/uuidv4');
 
 const users = [
   {id: 1, auth0ID: 1, email: 'wfukui@example.com', firstName: 'Wes', lastName: 'Fukui', userName: 'wFukui'},
@@ -40,8 +35,6 @@ const items = [
 
 let itemId = items.length;
 let listId = lists.length;
-let userId = users.length;
-let auth0ID = users.length;
 
 module.exports = {
   Query: {
@@ -54,11 +47,19 @@ module.exports = {
   },
 
   User: {
-    lists: user => filter(lists, {userId: Number(user.id)}),
+    lists: user => List.find({userId: user.id}).then(lists => lists).catch(error => {
+      console.log('An error occurred while attempting to retrieve a user\'s lists from MongoDB: ', error);
+      return [];
+    }),
+    // lists: user => filter(lists, {userId: Number(user.id)}),
   },
 
   List: {
-    author: list => find(users, {id: Number(list.userId)}),
+    // author: list => find(users, {id: Number(list.userId)}),
+    author: list => User.findById(list.userId).then(user => user).catch(error => {
+      console.log('An error occurred while attempting to retrieve a user\'s author from MongoDB: ', error);
+      return null;
+    }),
     items: list => filter(items, {listId: Number(list.id)}),
   },
 
@@ -75,21 +76,38 @@ module.exports = {
       items.push(item);
       return item;
     },
-    createList: (_, args) => {
-      const list = {
-        id: ++ listId,
-        ...args.input,
+    createList: (_, args) => new Promise((resolve, reject) => {
+      // const list = {
+      //   id: ++ listId,
+      //   ...args.input,
+      //   subCategories: [],
+      //   size: 10,
+      // };
+      // lists.push(list);
+      // return list;
+      const {
+        userId, title, category,
+      } = args.input;
+      let newList = new List({
+        userId,
+        title,
+        category,
         subCategories: [],
         size: 10,
-      };
-      lists.push(list);
-      return list;
-    },
+        items: [],
+      });
+      newList.save().then(() => {
+        resolve(newList);
+      }).catch(error => {
+        console.log('An error occured while attempting to save a new list: ', error.message);
+        reject(error.message);
+      });
+    }),
     createUser: (_, args) => new Promise((resolve, reject) => {
       const {
         firstName, lastName, userName, email,
       } = args.input;
-      let user = new User({
+      let newUser = new User({
         auth0ID: uuidv4(),
         firstName,
         lastName,
@@ -97,9 +115,9 @@ module.exports = {
         email,
         lists: [],
       });
-      user.save()
+      newUser.save()
       .then(() => {
-        resolve(user);
+        resolve(newUser);
       }).catch(error => {
         console.log('An error occurred while attempting to save a new user: ', error.message);
         reject(error.message);
