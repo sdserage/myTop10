@@ -57,7 +57,7 @@ module.exports = `
   }
 
   type Mutation {
-    addItem (input: ItemInput): Item
+    createItem (input: ItemInput): Item
     createList (input: ListInput): List
     createUser (input: UserInput): User
   }

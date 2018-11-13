@@ -1,6 +1,7 @@
 const { find, filter } = require('lodash');
 const { User } = require('../mongodbModels/user');
 const { List } = require('../mongodbModels/list');
+const { Item } = require('../mongodbModels/item');
 const uuidv4 = require('../util/uuidv4');
 
 const users = [
@@ -51,16 +52,18 @@ module.exports = {
       console.log('An error occurred while attempting to retrieve a user\'s lists from MongoDB: ', error);
       return [];
     }),
-    // lists: user => filter(lists, {userId: Number(user.id)}),
   },
 
   List: {
-    // author: list => find(users, {id: Number(list.userId)}),
     author: list => User.findById(list.userId).then(user => user).catch(error => {
       console.log('An error occurred while attempting to retrieve a user\'s author from MongoDB: ', error);
       return null;
     }),
-    items: list => filter(items, {listId: Number(list.id)}),
+    // items: list => filter(items, {listId: Number(list.id)}),
+    items: list => Item.find({listId: list.id}).then(items => items).catch(error => {
+      console.log('An error occurred while attempting to retrieve a list\'s items from MongoDB: ', error);
+      return [];
+    }),
   },
 
   Item: {
@@ -68,23 +71,35 @@ module.exports = {
   },
 
   Mutation: {
-    addItem: (_, args) => {
-      const item = {
-        id: ++ itemId,
-        ...args.input,
-      };
-      items.push(item);
-      return item;
-    },
+    // createItem: (_, args) => {
+    //   const item = {
+    //     id: ++ itemId,
+    //     ...args.input,
+    //   };
+    //   items.push(item);
+    //   return item;
+    // },
+    createItem: (_, args) => new Promise((resolve, reject) => {
+      const {
+        listId, name, description, details, nextItemId, pictures,
+      } = args.input;
+      let newItem = new Item({
+        listId,
+        name,
+        description,
+        details,
+        nextItemId,
+        pictures: pictures ? pictures : [],
+      });
+      newItem.save().then(()=> {
+        resolve(newItem);
+      }).catch(error => {
+        console.log('An error occurred while attempting to save a new item: ', error.message);
+        reject(error.message);
+      });
+    }),
+
     createList: (_, args) => new Promise((resolve, reject) => {
-      // const list = {
-      //   id: ++ listId,
-      //   ...args.input,
-      //   subCategories: [],
-      //   size: 10,
-      // };
-      // lists.push(list);
-      // return list;
       const {
         userId, title, category,
       } = args.input;
@@ -103,6 +118,7 @@ module.exports = {
         reject(error.message);
       });
     }),
+
     createUser: (_, args) => new Promise((resolve, reject) => {
       const {
         firstName, lastName, userName, email,
