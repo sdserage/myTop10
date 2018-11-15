@@ -4,8 +4,10 @@ const typeDefs = require('./typeDefs');
 const _ = require('lodash');
 const User = require('../mongodbModels/user');
 const List = require('../mongodbModels/list');
+const Item = require('../mongodbModels/item');
 const { resolvers, project } = require('../projection');
 const mongoose = require('mongoose');
+const uuidv4 = require('../util/uuidv4');
 
 const schema = makeExecutableSchema({
   typeDefs,
@@ -23,6 +25,7 @@ const schema = makeExecutableSchema({
       },
     },
     User: {
+      id: (parent, args, context, info) => parent._id.toString(),
       lists(parent, args, context, info) {
         const proj = project(info);
         if (_.keys(proj).length === 1) {
@@ -34,6 +37,7 @@ const schema = makeExecutableSchema({
       },
     },
     List: {
+      id: (parent, args, context, info) => parent._id.toString(),
       author(parent, args, context, info) {
         const proj = project(info);
         if (_.keys(proj).length === 1) {
@@ -54,9 +58,37 @@ const schema = makeExecutableSchema({
       },
     },
     Item: {
-
+      id: (parent, args, context, info) => parent._id.toString(),
+      list(parent, args, context, info) {
+        const proj = project(info);
+        if (_.keys(proj).length === 1) {
+          return {id: parent.list._id};
+        }
+        return Item.populate(parent, {path: 'list', select: proj}).then(() => {
+          return parent.list;
+        });
+      },
     },
     Mutation: {
+      createUser: (parent, args, context, info) => new Promise((resolve, reject) => {
+        const {
+          firstName, lastName, userName, email,
+        } = args.input;
+        let newUser = new User({
+          auth0ID: uuidv4(),
+          firstName,
+          lastName,
+          userName,
+          email,
+          lists: [],
+        });
+        newUser.save().then(() => {
+          resolve(newUser);
+        }).catch(error => {
+          console.log('An error occurred while attempting to save a new user: ', error.message);
+          reject(error.message);
+        });
+      }),
       createList: (parent, args, context, info) => new Promise((resolve, reject) => {
         const {
           userId, title, category,
@@ -72,13 +104,34 @@ const schema = makeExecutableSchema({
         });
         newList.save().then(() => {
           User.findById(newList.author).then(user => {
-            user.lists.push(newList._id)
-            user.save().then(() => {
-              resolve(newList);
-            });
+            user.lists.push(newList._id);
+            user.save().then(() => resolve(newList));
           });
         }).catch(error => {
           console.log('An error occured while attempting to save a new list: ', error.message);
+          reject(error.message);
+        });
+      }),
+      createItem: (parent, args, context, info) => new Promise((resolve, reject) => {
+        const {
+          listId, name, description, details, nextItemId, pictures,
+        } = args.input;
+        const proj = project(info);
+        let newItem = new Item({
+          list: listId,
+          name,
+          description,
+          details,
+          nextItemId,
+          pictures: pictures ? pictures : [],
+        });
+        newItem.save().then(() => {
+          List.findById(newItem.list).then(list => {
+            list.items.push(newItem._id);
+            list.save().then(() => resolve(newItem));
+          });
+        }).catch(error => {
+          console.log('An error occurred while attempting to save a new item: ', error.message);
           reject(error.message);
         });
       }),
