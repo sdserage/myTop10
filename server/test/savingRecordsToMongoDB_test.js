@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { User } = require('../mongodbModels/user');
+const User = require('../mongodbModels/user');
 const uuidv4 = require('../util/uuidv4');
 
 describe('Saving records', () => {

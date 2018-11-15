@@ -1,11 +1,12 @@
-const { User } = require('../mongodbModels/user');
-const { List } = require('../mongodbModels/list');
-const { Item } = require('../mongodbModels/item');
+const User = require('../mongodbModels/user');
+const List = require('../mongodbModels/list');
+const Item = require('../mongodbModels/item');
 const uuidv4 = require('../util/uuidv4');
 
 module.exports = {
   Query: {
     users: () => User.find({})
+      .populate("")
       .then(users => users)
       .catch(error => {
         console.log('An error occurred while attempting to retrieve users from MongoDB: ', error);
@@ -26,17 +27,22 @@ module.exports = {
     //   return null;
     // }),
     author: list => User.findOne({lists: {$in: [list._id]}}).then(user => user).catch(error => {
-        console.log('An error occurred while attempting to retrieve a list\'s author from MongoDB: ', error);
-        return null;
-      }),
-    items: list => Item.find({listId: list.id}).then(items => items).catch(error => {
-      console.log('An error occurred while attempting to retrieve a list\'s items from MongoDB: ', error);
-      return [];
+      console.log('An error occurred while attempting to retrieve a list\'s author from MongoDB: ', error);
+      return null;
     }),
+
+    // items: list => Item.find({listId: list.id}).then(items => items).catch(error => {
+    //   console.log('An error occurred while attempting to retrieve a list\'s items from MongoDB: ', error);
+    //   return [];
+    // }),
   },
 
   Item: {
     // list: item => find(lists, {id: Number(item.listId)}),
+    // list: item => List.findById(item.listId).then(list => list).catch(error => {
+    //   console.log('An error occurred while attempting to retrieve an item\'s parent list: ', error);
+    //   return null;
+    // }),
     list: item => List.findById(item.listId).then(list => list).catch(error => {
       console.log('An error occurred while attempting to retrieve an item\'s parent list: ', error);
       return null;
