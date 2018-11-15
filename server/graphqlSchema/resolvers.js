@@ -14,17 +14,21 @@ module.exports = {
   },
 
   User: {
-    lists: user => List.find({userId: user.id}).then(lists => lists).catch(error => {
-      console.log('An error occurred while attempting to retrieve a user\'s lists from MongoDB: ', error);
-      return [];
-    }),
+    // lists: user => List.find({userId: user.id}).then(lists => lists).catch(error => {
+    //   console.log('An error occurred while attempting to retrieve a user\'s lists from MongoDB: ', error);
+    //   return [];
+    // }),
   },
 
   List: {
-    author: list => User.findById(list.userId).then(user => user).catch(error => {
-      console.log('An error occurred while attempting to retrieve a list\'s author from MongoDB: ', error);
-      return null;
-    }),
+    // author: list => User.findById(list.userId).then(user => user).catch(error => {
+    //   console.log('An error occurred while attempting to retrieve a list\'s author from MongoDB: ', error);
+    //   return null;
+    // }),
+    author: list => User.findOne({lists: {$in: [list._id]}}).then(user => user).catch(error => {
+        console.log('An error occurred while attempting to retrieve a list\'s author from MongoDB: ', error);
+        return null;
+      }),
     items: list => Item.find({listId: list.id}).then(items => items).catch(error => {
       console.log('An error occurred while attempting to retrieve a list\'s items from MongoDB: ', error);
       return [];
