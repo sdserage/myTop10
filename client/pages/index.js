@@ -1,12 +1,7 @@
 import Link from 'next/link';
 import styled from 'styled-components';
 import gql from 'graphql-tag';
-//
-import { ApolloProvider, Query } from 'react-apollo';
-import { ApolloClient } from 'apollo-client';
-import { createHttpLink } from 'apollo-link-http';
-import { InMemoryCache } from 'apollo-cache-inmemory';
-import fetch from 'node-fetch';
+import { Query } from 'react-apollo';
 
 const GET_USERS = gql`
   query getUsers{
@@ -25,10 +20,14 @@ const context = {};
 const Test = styled.a`
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   font-weight: bolder;
+  color: ${props => props.theme.primaryColor};
 `;
 
 const Index = () => (
   <div>
+    <Link href="/about">
+      <Test>About</Test>
+    </Link>
     <Query query={GET_USERS}>
       {({loading, error, data}) => {
         if (loading) return <div>Loading...</div>;
