@@ -2,24 +2,23 @@ import Link from 'next/link';
 import styled from 'styled-components';
 import gql from 'graphql-tag';
 //
-import { ApolloProvider } from 'react-apollo';
+import { ApolloProvider, Query } from 'react-apollo';
 import { ApolloClient } from 'apollo-client';
 import { createHttpLink } from 'apollo-link-http';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import fetch from 'node-fetch';
 
-const client = new ApolloClient({
-  ssrMode: true,
-  link: createHttpLink({
-    uri: 'http://localhost:3998/graphql',
-    fetch,
-    // credentials: 'same-origin',
-    // headers: {
-    //   cookie: requestAnimationFrame.header('Cookie'),
-    // },
-  }),
-  cache: new InMemoryCache(),
-});
+const GET_USERS = gql`
+  query getUsers{
+    users {
+      firstName
+      lastName
+      lists {
+        title
+      }
+    }
+  }
+`;
 
 const context = {};
 
@@ -29,17 +28,18 @@ const Test = styled.a`
 `;
 
 const Index = () => (
-  <ApolloProvider client={client}>
   <div>
-    <Link href='/login'>
-      <Test>login/register</Test>
-    </Link>
-    <Link href='/about'>
-      <Test>about</Test>
-    </Link>
-    <p>Hello Next.js</p>
+    <Query query={GET_USERS}>
+      {({loading, error, data}) => {
+        if (loading) return <div>Loading...</div>;
+        if (error) return <div>Error</div>
+        return <div>
+          Hello GraphQL
+            {JSON.stringify(data.users)}
+        </div>
+      }}
+    </Query>
   </div>
-  </ApolloProvider>
 );
 
 export default Index;
