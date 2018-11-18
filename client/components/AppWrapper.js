@@ -60,7 +60,7 @@ export default function AppWrapper(props) {
           <Link href="/">
             <a>Home</a>
           </Link>
-          <Link href="/about">
+          <Link href="/my-lists">
             <a>My Lists</a>
           </Link>
           <Link href="/about">

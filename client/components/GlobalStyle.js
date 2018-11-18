@@ -2,7 +2,7 @@ import { createGlobalStyle } from 'styled-components';
 
 
 const GlobalStyle = createGlobalStyle`
-  @import url('https://fonts.googleapis.com/css?family=Niramit');
+  @import url('https://fonts.googleapis.com/css?family=Muli');
 
   html, body, div, span, applet, object, iframe,
   h1, h2, h3, h4, h5, h6, p, blockquote, pre,
@@ -23,7 +23,7 @@ const GlobalStyle = createGlobalStyle`
 	  font-size: 100%;
 	  font: inherit;
 	  vertical-align: baseline;
-    font-family: 'Niramit', sans-serif;
+    font-family: 'Muli', sans-serif;
     box-sizing: border-box;
   }
 
