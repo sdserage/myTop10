@@ -3,13 +3,11 @@ import App, { Container } from 'next/app'
 import withApolloClient from '../graphQL/lib/with-apollo-client';
 import { ApolloProvider } from 'react-apollo';
 import { ThemeProvider } from 'styled-components';
+import GlobalStyle from '../components/GlobalStyle';
+import AppWrapper from '../components/AppWrapper';
+import theme from '../util/theme';
 
-
-const theme = {
-  primaryColor: 'red',
-};
-
-class MyApp extends App {
+class MyTop10 extends App {
   static async getInitialProps({ Component, router, ctx }) {
     let pageProps = {};
 
@@ -25,12 +23,15 @@ class MyApp extends App {
       <Container>
         <ThemeProvider theme={theme}>
           <ApolloProvider client={apolloClient}>
-            <Component {...pageProps} />
+            <AppWrapper>
+              <Component {...pageProps} />
+            </AppWrapper>
           </ApolloProvider>
         </ThemeProvider>
+        <GlobalStyle />
       </Container>
     );
   }
 }
 
-export default withApolloClient(MyApp);
+export default withApolloClient(MyTop10);
