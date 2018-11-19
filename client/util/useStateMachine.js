@@ -9,15 +9,16 @@ import { interpret } from 'xstate/lib/interpreter';
  * with.
  */
 
-export default function useStateMachine(stateMachine, stateLabel) {
-  const sl = typeof stateLabel === 'string' ? stateLabel : 'state';
+export default function useStateMachine(stateMachine) {
   const [ state, setMode ] = useState(stateMachine.initial);
   const [ service ] = useState(interpret(stateMachine).onTransition(state => setMode(state)));
+  const [ stateLabel ] = useState(service.machine.id === '(machine)' ? 'machine' : service.machine.id);
+  // console.log(service)
   useEffect(() => {
     service.start();
     return () => service.stop();
   }, []);
   let sm = {service}
-  sm[sl] = state;
+  sm[stateLabel] = state;
   return sm;
 }
