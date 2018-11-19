@@ -17,17 +17,25 @@ const AccountInfoSideBar = styled.aside`
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: ${props => props.theme.darkColor};
+  /* color: ${props => props.theme.darkColor}; */
   background-color: ${props => props.theme.mediumColor};
   box-shadow: 2px 0px 5px ${props => props.theme.mediumColor};
+  color: ${props => props.theme.lightestColor};
   h2 {
     margin-bottom: ${props => props.theme._spacer()};
     text-align: center;
+    color: inherit;
   }
   h3 {
     margin-bottom: ${props => props.theme._spacer()};
     width: 100%;
     text-align: center;
+    color: inherit;
+  }
+  footer {
+    color: inherit;
+    position: absolute;
+    bottom: ${props => props.theme._spacer()};
   }
 `;
 
@@ -41,6 +49,7 @@ const ProfilePicture = styled.img`
 `;
 
 const MainNav = styled.nav`
+color: inherit;
   align-self: flex-start;
   display: flex;
   flex-direction: column;
@@ -71,6 +80,7 @@ export default function AppWrapper(props) {
             <a>Settings</a>
           </Link>
         </MainNav>
+        <footer>Serage Design 2018 &trade;</footer>
       </AccountInfoSideBar>
       <PageHolder>
         {props.children}

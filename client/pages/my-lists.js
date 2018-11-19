@@ -94,6 +94,12 @@ function renderedList(lists, service) {
           <ul>
             <CategoryLabel primary>{list.category}</CategoryLabel>
             {list.subCategories.map((subCategory, index) => <CategoryLabel key={index}>{subCategory}</CategoryLabel>)}
+            <CategoryLabelSpecial>
+              <i className="material-icons">
+                add_circle_outline
+              </i>
+              add category
+            </CategoryLabelSpecial>
           </ul>
         </ListBox>
       ))}
@@ -120,8 +126,15 @@ const ListBox = styled.li`
     color: inherit;
     margin-bottom: ${props => props.theme._spacer()};
   }
+  h4 {
+    color: inherit;
+  }
   padding: ${props => props.theme._spacer()};
   box-shadow: 2px 2px 5px ${props => props.theme.mediumColor};
+  &:hover {
+    background-color: ${props => props.theme.darkColor};
+    color: ${props => props.theme.lightestColor};
+  }
 `;
 
 const ListBoxSpecial = styled(ListBox)`
@@ -143,10 +156,34 @@ const CategoryLabel = styled.li`
   padding: ${props => props.theme._spacer()};
   background-color: ${props => props.primary ? props.theme.lightColor : props.theme.mediumColor};
   color: ${props => props.theme.lightestColor};
+  border: ${props => props.primary ? props.theme.lightColor : props.theme.mediumColor} 1px solid; 
   display: inline-block;
   margin: ${props => props.theme._spacer()} ${props => props.theme._spacer()} 0 0;
   border-radius: 5px;
   box-shadow: 2px 2px 5px ${props => props.theme.mediumColor};
+  max-height: 39px;
+  text-align: center;
+  &:hover {
+    background-color: ${props => props.theme.lightestColor};
+    color: ${props => props.primary ? props.theme.lightColor : props.theme.mediumColor};
+  }
+`;
+
+const CategoryLabelSpecial = styled(CategoryLabel)`
+  background-color: ${props => props.theme.lightColor};
+  border: ${props => props.theme.lightColor} 1px solid; 
+  position: relative;
+  i {
+    position: relative;
+    color: inherit;
+    font-size: 16px;
+    justify-self: flex-end;
+    margin-right: ${props => props.theme._spacer(0.5)};
+    top: 3px;
+  }
+  &:hover {
+    color: ${props => props.theme.lightColor};
+  }
 `;
 
 const ListsContainer = styled.ul`
