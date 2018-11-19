@@ -76,7 +76,7 @@ export default function MyLists(props) {
               return <div>Error!</div>;
             }
             const { user } = data;
-            return (renderedList(user.lists))
+            return (renderedList(user.lists, service))
           }}
         </Query>
       }
@@ -84,18 +84,25 @@ export default function MyLists(props) {
   )
 }
 
-function renderedList(lists) {
+function renderedList(lists, service) {
   return (
     <ListsContainer>
       {lists.map((list, index) => (
-        <li key={index}>
+        <ListBox key={index}>
           <h2>{`Top ${list.size} ${list.title}`}</h2>
+          <h4>Categories</h4>
           <ul>
             <CategoryLabel primary>{list.category}</CategoryLabel>
             {list.subCategories.map((subCategory, index) => <CategoryLabel key={index}>{subCategory}</CategoryLabel>)}
           </ul>
-        </li>
+        </ListBox>
       ))}
+      <ListBoxSpecial onClick={() => service.send('t_CREATE_LIST')}>
+        <h2>Create New List</h2>
+        <i className="material-icons">
+          add_circle_outline
+        </i>
+      </ListBoxSpecial>
   </ListsContainer>
   );
 }
@@ -105,7 +112,31 @@ const SubCategoriesContainer = styled.ul`
 `;
 
 const ListBox = styled.li`
+  border: ${props => props.theme.darkColor} solid 2px;
+  border-radius: 5px;
+  color: ${props => props.theme.darkColor};
+  h2 {
+    font-weight: bold;
+    color: inherit;
+    margin-bottom: ${props => props.theme._spacer()};
+  }
+  padding: ${props => props.theme._spacer()};
+  box-shadow: 2px 2px 5px ${props => props.theme.mediumColor};
+`;
 
+const ListBoxSpecial = styled(ListBox)`
+  text-align: center;
+  color: ${props => props.theme.lightColor};
+  border-color: ${props => props.theme.lightColor};
+  i {
+    color: inherit;
+    font-size: 1000%;
+    justify-self: center;
+  }
+  &:hover {
+    background-color: ${props => props.theme.lightColor};
+    color: ${props => props.theme.lightestColor};
+  }
 `;
 
 const CategoryLabel = styled.li`
@@ -113,12 +144,13 @@ const CategoryLabel = styled.li`
   background-color: ${props => props.primary ? props.theme.lightColor : props.theme.mediumColor};
   color: ${props => props.theme.lightestColor};
   display: inline-block;
-  margin: 0 ${props => props.theme._spacer()} ${props => props.theme._spacer()} 0;
+  margin: ${props => props.theme._spacer()} ${props => props.theme._spacer()} 0 0;
   border-radius: 5px;
+  box-shadow: 2px 2px 5px ${props => props.theme.mediumColor};
 `;
 
 const ListsContainer = styled.ul`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-gap: ${props => props.theme._spacer()};
+  grid-gap: ${props => props.theme._spacer(2)};
 `;

@@ -21,14 +21,16 @@ class MyTop10 extends App {
     const { Component, pageProps, apolloClient } = this.props
     return (
       <Container>
-        <ThemeProvider theme={theme}>
-          <ApolloProvider client={apolloClient}>
-            <AppWrapper>
-              <Component {...pageProps} />
-            </AppWrapper>
-          </ApolloProvider>
-        </ThemeProvider>
-        <GlobalStyle />
+        <ApolloProvider client={apolloClient}>
+          <ThemeProvider theme={theme}>
+            <>
+              <AppWrapper>
+                <Component {...pageProps} />
+              </AppWrapper>
+              <GlobalStyle />
+            </>
+          </ThemeProvider>
+        </ApolloProvider>
       </Container>
     );
   }

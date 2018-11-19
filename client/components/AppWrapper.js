@@ -4,6 +4,7 @@ import Link from 'next/link';
 const PageHolder = styled.div`
   display: flex;
   margin-left: 20vw;
+  padding: 0 ${props => props.theme._spacer()};
 `;
 
 const AccountInfoSideBar = styled.aside`
