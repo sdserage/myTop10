@@ -17,28 +17,26 @@ const GET_USERS = gql`
 
 const context = {};
 
-const Test = styled.a`
-  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-  font-weight: bolder;
-  color: ${props => props.theme.primaryColor};
+const PageWrapper = styled.section`
+  padding: ${props => props.theme._spacer()};
+  display: flex;
+  flex-direction: column;
 `;
 
-const Index = () => (
-  <div>
-    <Link href="/about">
-      <Test>About</Test>
-    </Link>
+const Home = () => (
+  <PageWrapper>
     <Query query={GET_USERS}>
       {({loading, error, data}) => {
         if (loading) return <div>Loading...</div>;
         if (error) return <div>Error</div>
-        return <div>
-          Hello GraphQL
-            {JSON.stringify(data.users)}
-        </div>
+        return (
+          <>
+            <h1>Home</h1>
+          </>
+        )
       }}
     </Query>
-  </div>
+  </PageWrapper>
 );
 
-export default Index;
+export default Home;

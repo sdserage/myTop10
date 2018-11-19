@@ -1,5 +1,6 @@
 import gql from 'graphql-tag';
 import { Query } from 'react-apollo';
+import PageWrapper from '../components/styledComponents/PageWrapper';
 
 const GET_USERS = gql`
   query getUsers{
@@ -19,7 +20,8 @@ const GET_USERS = gql`
 `;
 
 export default () => (
-  <div>
+  <PageWrapper>
+    <h1>About</h1>
         <Query query={GET_USERS}>
       {({loading, error, data}) => {
         if (loading) return <div>Loading...</div>;
@@ -31,5 +33,5 @@ export default () => (
       }}
     </Query>
     <p>This is the about page</p>
-  </div>
+  </PageWrapper>
 );

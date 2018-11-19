@@ -23,6 +23,7 @@ export default class MyDocument extends Document {
             content="Native-like Page Transitions with React and NextJS, A Travel App"
           />
           {this.props.styleTags}
+          <title>My Top 10</title>
         </Head>
         <body>
           <Main />
