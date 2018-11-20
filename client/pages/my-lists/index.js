@@ -2,11 +2,11 @@ import styled from 'styled-components';
 import { Machine } from 'xstate';
 import { interpret } from 'xstate/lib/interpreter';
 import { useState, useEffect } from 'react';
-import useStateMachine from '../util/useStateMachine';
-import PageWrapper from '../components/styledComponents/PageWrapper';
+import useStateMachine from '../../util/useStateMachine';
+import PageWrapper from '../../components/styledComponents/PageWrapper';
 // GraphQL
 import { Query } from 'react-apollo';
-import { gql_GET_LISTS } from '../graphQL/queries';
+import { gql_GET_LISTS } from '../../graphQL/queries';
 
 const modeMachine = Machine(
   {
@@ -90,11 +90,18 @@ function renderedList(lists, service) {
       {lists.map((list, index) => (
         <ListBox key={index}>
           <h2>{`Top ${list.size} ${list.title}`}</h2>
+          <span>
+            <button onClick={() => service.send('t_CREATE_LIST')}>
+              <i className="material-icons">
+                edit
+              </i>
+            </button>
+          </span>
           <h4>Categories</h4>
           <ul>
-            <CategoryLabel primary>{list.category}</CategoryLabel>
-            {list.subCategories.map((subCategory, index) => <CategoryLabel key={index}>{subCategory}</CategoryLabel>)}
-            <CategoryLabelSpecial>
+            <CategoryLabel primary tabIndex="0" role="combobox">{list.category}</CategoryLabel>
+            {list.subCategories.map((subCategory, index) => <CategoryLabel role="textbox" key={index} tabIndex="0">{subCategory}</CategoryLabel>)}
+            <CategoryLabelSpecial tabIndex="0" role="button">
               <i className="material-icons">
                 add_circle_outline
               </i>
@@ -103,7 +110,7 @@ function renderedList(lists, service) {
           </ul>
         </ListBox>
       ))}
-      <ListBoxSpecial onClick={() => service.send('t_CREATE_LIST')}>
+      <ListBoxSpecial role="button" tabIndex="0" onClick={() => service.send('t_CREATE_LIST')}>
         <h2>Create New List</h2>
         <i className="material-icons">
           add_circle_outline
@@ -121,38 +128,81 @@ const ListBox = styled.li`
   border: ${props => props.theme.darkColor} solid 2px;
   border-radius: 5px;
   color: ${props => props.theme.darkColor};
+  /* background-color: ${props => props.theme.darkColor};
+    color: ${props => props.theme.lightestColor}; */
+  display: grid;
+  grid-template-areas:
+    "title title edit"
+    "categories-heading . ."
+    "categories categories categories"
+  ;
+  align-content: start;
   h2 {
     font-weight: bold;
     color: inherit;
     margin-bottom: ${props => props.theme._spacer()};
+    grid-area: title;
   }
   h4 {
     color: inherit;
+    grid-area: categories-heading;
+  }
+  span {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
+    button {
+      cursor: pointer;
+      grid-area: edit;
+      color: ${props => props.theme.lightestColor};
+      border: none;
+      background: transparent;
+      display: grid;
+      align-content: end;
+      padding: ${props => props.theme._spacer(0.5)};
+      justify-content: start;
+      outline: none;
+      i {
+        color: inherit;
+        font-size: 16px;
+      }
+    }
+    button:hover, button:focus {
+      color: ${props => props.theme.lightColor};
+    }
+  }
+  ul {
+    grid-area: categories;
   }
   padding: ${props => props.theme._spacer()};
   box-shadow: 2px 2px 5px ${props => props.theme.mediumColor};
-  &:hover {
+  &:hover, &:focus-within {
     background-color: ${props => props.theme.darkColor};
     color: ${props => props.theme.lightestColor};
   }
 `;
 
 const ListBoxSpecial = styled(ListBox)`
+  cursor: pointer;
   text-align: center;
   color: ${props => props.theme.lightColor};
   border-color: ${props => props.theme.lightColor};
+  display: flex;
+  flex-direction: column;
+  align-content: center;
   i {
     color: inherit;
     font-size: 1000%;
     justify-self: center;
   }
-  &:hover {
+  &:hover, &:focus-within {
     background-color: ${props => props.theme.lightColor};
     color: ${props => props.theme.lightestColor};
   }
 `;
 
 const CategoryLabel = styled.li`
+  cursor: pointer;
   padding: ${props => props.theme._spacer()};
   background-color: ${props => props.primary ? props.theme.lightColor : props.theme.mediumColor};
   color: ${props => props.theme.lightestColor};
@@ -163,7 +213,8 @@ const CategoryLabel = styled.li`
   box-shadow: 2px 2px 5px ${props => props.theme.mediumColor};
   max-height: 39px;
   text-align: center;
-  &:hover {
+  outline: none;
+  &:hover, &:focus {
     background-color: ${props => props.theme.lightestColor};
     color: ${props => props.primary ? props.theme.lightColor : props.theme.mediumColor};
   }
@@ -181,7 +232,7 @@ const CategoryLabelSpecial = styled(CategoryLabel)`
     margin-right: ${props => props.theme._spacer(0.5)};
     top: 3px;
   }
-  &:hover {
+  &:hover, &:focus {
     color: ${props => props.theme.lightColor};
   }
 `;

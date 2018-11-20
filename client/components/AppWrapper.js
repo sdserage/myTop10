@@ -12,7 +12,7 @@ const AccountInfoSideBar = styled.aside`
   top: 0;
   bottom: 0;
   width: 20vw;
-  border-right: solid 1px ${props => props.theme.darkestColor};
+  border-right: solid 1px ${props => props.theme.darkColor};
   padding: ${props => props.theme._spacer()};
   display: flex;
   flex-direction: column;
