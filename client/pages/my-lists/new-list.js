@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import useStateMachine from '../../util/useStateMachine';
 import PageWrapper from '../../components/styledComponents/PageWrapper';
 import Router from 'next/router';
+import EditableSubCategory from '../../components/EditableSubCategory';
 // GraphQL
 import { Query } from 'react-apollo';
 import { gql_GET_LISTS } from '../../graphQL/queries';
@@ -75,6 +76,8 @@ function reducer(state, { type, payload }) {
       return {...state, size: payload};
     case 'UPDATE_ITEMS':
       return {...state, items: payload};
+    case 'UPDATE_TEST':
+      return {...state, test: payload};
     default:
       return state;
   }
@@ -87,6 +90,7 @@ export default function NewList(props) {
     subCategories: [],
     size: 10,
     items: [],
+    test: 'test',
   });
   const [subCategory, updateSubCategory] = useState('');
   const [item, updateItem] = useState({});
@@ -147,7 +151,137 @@ export default function NewList(props) {
           onChange={e => dispatch('UPDATE_SIZE', Number(e.target.value))}
         />
 
+        <EditableSubCategory
+          primary
+          placeholder="Enter Sub Category"
+          value={state.test}
+          _saveChanges={value => dispatch('UPDATE_TEST', value)}
+        />
+
       </form>
     </PageWrapper>
   );
 }
+
+const SubCategoriesContainer = styled.ul`
+  
+`;
+
+const ListBox = styled.li`
+  border: ${props => props.theme.darkColor} solid 2px;
+  border-radius: 5px;
+  color: ${props => props.theme.darkColor};
+  /* background-color: ${props => props.theme.darkColor};
+    color: ${props => props.theme.lightestColor}; */
+  display: grid;
+  grid-template-areas:
+    "title title edit"
+    "categories-heading . ."
+    "categories categories categories"
+  ;
+  align-content: start;
+  h2 {
+    font-weight: bold;
+    color: inherit;
+    margin-bottom: ${props => props.theme._spacer()};
+    grid-area: title;
+  }
+  h4 {
+    color: inherit;
+    grid-area: categories-heading;
+  }
+  span {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
+    button {
+      cursor: pointer;
+      grid-area: edit;
+      color: ${props => props.theme.lightestColor};
+      border: none;
+      background: transparent;
+      display: grid;
+      align-content: end;
+      padding: ${props => props.theme._spacer(0.5)};
+      justify-content: start;
+      outline: none;
+      i {
+        color: inherit;
+        font-size: 16px;
+      }
+    }
+    button:hover, button:focus {
+      color: ${props => props.theme.lightColor};
+    }
+  }
+  ul {
+    grid-area: categories;
+  }
+  padding: ${props => props.theme._spacer()};
+  box-shadow: 2px 2px 5px ${props => props.theme.mediumColor};
+  &:hover, &:focus-within {
+    background-color: ${props => props.theme.darkColor};
+    color: ${props => props.theme.lightestColor};
+  }
+`;
+
+const ListBoxSpecial = styled(ListBox)`
+  cursor: pointer;
+  text-align: center;
+  color: ${props => props.theme.lightColor};
+  border-color: ${props => props.theme.lightColor};
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  i {
+    color: inherit;
+    font-size: 1000%;
+    justify-self: center;
+  }
+  &:hover, &:focus-within {
+    background-color: ${props => props.theme.lightColor};
+    color: ${props => props.theme.lightestColor};
+  }
+`;
+
+const CategoryLabel = styled.li`
+  cursor: pointer;
+  padding: ${props => props.theme._spacer()};
+  background-color: ${props => props.primary ? props.theme.lightColor : props.theme.mediumColor};
+  color: ${props => props.theme.lightestColor};
+  border: ${props => props.primary ? props.theme.lightColor : props.theme.mediumColor} 1px solid; 
+  display: inline-block;
+  margin: ${props => props.theme._spacer()} ${props => props.theme._spacer()} 0 0;
+  border-radius: 5px;
+  box-shadow: 2px 2px 5px ${props => props.theme.mediumColor};
+  max-height: 39px;
+  text-align: center;
+  outline: none;
+  &:hover, &:focus {
+    background-color: ${props => props.theme.lightestColor};
+    color: ${props => props.primary ? props.theme.lightColor : props.theme.mediumColor};
+  }
+`;
+
+const CategoryLabelSpecial = styled(CategoryLabel)`
+  background-color: ${props => props.theme.lightColor};
+  border: ${props => props.theme.lightColor} 1px solid; 
+  position: relative;
+  i {
+    position: relative;
+    color: inherit;
+    font-size: 16px;
+    justify-self: flex-end;
+    margin-right: ${props => props.theme._spacer(0.5)};
+    top: 3px;
+  }
+  &:hover, &:focus {
+    color: ${props => props.theme.lightColor};
+  }
+`;
+
+const ListsContainer = styled.ul`
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-gap: ${props => props.theme._spacer(2)};
+`;
