@@ -1,10 +1,10 @@
 import pw from './PageWrapper';
-import cl from './CategoryLabel';
+import sc from './SubCategory';
 
 export const PageWrapper = pw;
-export const CategoryLabel = cl;
+export const SubCategory = sc;
 
 export default {
   PageWrapper,
-  CategoryLabel,
+  SubCategory,
 };

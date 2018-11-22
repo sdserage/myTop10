@@ -1,10 +1,11 @@
 import styled from 'styled-components';
 
-const CategoryLabel = styled.li`
+const SubCategory = styled.li`
+  position: relative;
   padding: ${props => props.theme._spacer()};
-  background-color: ${props => props.primary ? props.theme.lightColor : props.theme.mediumColor};
+  background-color: ${props => props.special ? props.theme.lightColor : props.theme.mediumColor};
   color: ${props => props.theme.lightestColor};
-  border: ${props => props.primary ? props.theme.lightColor : props.theme.mediumColor} 1px solid; 
+  border: ${props => props.special ? props.theme.lightColor : props.theme.mediumColor} 1px solid; 
   display: inline-block;
   margin: ${props => props.theme._spacer()} ${props => props.theme._spacer()} 0 0;
   border-radius: 5px;
@@ -12,6 +13,12 @@ const CategoryLabel = styled.li`
   max-height: 39px;
   text-align: center;
   outline: none;
+  i {
+    position: relative;
+    color: ${props => props.value ? 'inherit' : props.theme.darkColor};
+    font-size: inherit;
+    top: 2px;
+  }
   button {
     cursor: pointer;
     background: transparent;
@@ -26,7 +33,7 @@ const CategoryLabel = styled.li`
     }
   }
   button:hover {
-    color: ${props => props.primary ? props.theme.mediumColor : props.theme.lightColor};
+    color: ${props => props.special ? props.theme.mediumColor : props.theme.lightColor};
   }
   input {
     background: transparent;
@@ -36,12 +43,12 @@ const CategoryLabel = styled.li`
     color: inherit;
   }
   input::placeholder {
-    color: inherit;
+    color: ${props => props.theme.darkColor};
   }
   &:hover, &:focus, &:focus-within {
     background-color: ${props => props.theme.lightestColor};
-    color: ${props => props.primary ? props.theme.lightColor : props.theme.mediumColor};
+    color: ${props => props.special ? props.theme.lightColor : props.theme.mediumColor};
   }
 `;
 
-export default CategoryLabel;
+export default SubCategory;

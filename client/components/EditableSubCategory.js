@@ -1,15 +1,21 @@
-import CategoryLabel from './styledComponents/CategoryLabel';
-import useMnemonicValue from '../util/useMnemonicValue';
+import SubCategory from './styledComponents/SubCategory';
+import useMnemonicString from '../util/useMnemonicString';
+import Condition from './Condition';
 
 export default function EditableSubCategory(props) {
   const _saveChanges = props._saveChanges ?
     props._saveChanges
   :
     value => console.log('Save changes not implemented. Passed value: ', value);
-  const { value, updateValue, originalValue } = useMnemonicValue(props.value);
-  const size = value.length || 17;
+  const { value, updateValue, originalValue, setNewOriginalValue } = useMnemonicString(props.value);
+  const size = value.length || props.placeholder.length;
   return (
-    <CategoryLabel primary={props.primary}>
+    <SubCategory value={value} special={props.special}>
+      <Condition condition={props.submitType}>
+        <i className="material-icons">
+          add_circle_outline
+        </i>
+      </Condition>
       <input
         placeholder={props.placeholder}
         type="text"
@@ -17,33 +23,34 @@ export default function EditableSubCategory(props) {
         onChange={e => updateValue(e.target.value)}
         size={size}
       />
-      {
-        value !== originalValue &&
-        <>
-          {value &&
-            <button
-              onClick={e => {
-                _saveChanges(value);
-                e.preventDefault();
-              }}
-              >
-              <i className="material-icons">
-                save
-              </i>
-            </button>
-          }
+      <Condition condition={value !== originalValue}>
+        <Condition condition={value}>
           <button
             onClick={e => {
-              updateValue(originalValue);
               e.preventDefault();
+              _saveChanges(value, originalValue);
+              if (props.submitType) {
+                updateValue('')
+                setNewOriginalValue('');
+              }
             }}
-          >
+            >
             <i className="material-icons">
-              cancel
+              save
             </i>
           </button>
-        </>
-      }
-    </CategoryLabel>
+        </Condition>
+        <button
+          onClick={e => {
+            e.preventDefault();
+            updateValue(originalValue);
+          }}
+        >
+          <i className="material-icons">
+            cancel
+          </i>
+        </button>
+      </Condition>
+    </SubCategory>
   );
 }

@@ -6,9 +6,30 @@ import useStateMachine from '../../util/useStateMachine';
 import PageWrapper from '../../components/styledComponents/PageWrapper';
 import Router from 'next/router';
 import EditableSubCategory from '../../components/EditableSubCategory';
+import EditableCategory from '../../components/EditableCategory';
+import Condition from '../../components/Condition';
 // GraphQL
 import { Query } from 'react-apollo';
 import { gql_GET_LISTS } from '../../graphQL/queries';
+
+const categoryOptions = [
+  'Sports',
+  'TV Shows',
+  'Literature',
+  'Health',
+  'Gaming',
+  'Animals',
+  'Music',
+  'Food',
+  'Hobbies',
+  'Nature',
+  'Fantasy',
+  'Sci-Fi',
+  'Technology',
+  'History',
+  'Science',
+  'Outdoor Recreation',
+];
 
 const modeMachine = Machine(
   {
@@ -83,6 +104,18 @@ function reducer(state, { type, payload }) {
   }
 }
 
+function updateValueInArray(array, newValue, originalValue) {
+  console.log('newValue: ', newValue);
+  console.log('originalValue: ', originalValue);
+  const desiredIndex = array.findIndex(arrayElement => arrayElement === originalValue);
+  if (desiredIndex < 0) {
+    return array;
+  }
+  let newArray = array.slice();
+  newArray[desiredIndex] = newValue;
+  return newArray;
+}
+
 export default function NewList(props) {
   const [ state, updateState ] = useState({
     title: '',
@@ -110,38 +143,28 @@ export default function NewList(props) {
           value={state.title}
           onChange={e => dispatch('UPDATE_TITLE', e.target.value)}
         />
-        <select value={state.category} onChange={e => dispatch('UPDATE_CATEGORY', e.target.value)}>
-          <option value="" disabled>Choose a category</option>
-          <option value="Sports">Sports</option>
-          <option value="TV Shows">TV Shows</option>
-          <option value="Literature">Literature</option>
-          <option value="Health">Health</option>
-          <option value="Gaming">Gaming</option>
-          <option value="Animals">Animals</option>
-          <option value="Music">Music</option>
-          <option value="Food">Food</option>
-          <option value="Hobbies">Hobbies</option>
-          <option value="Nature">Nature</option>
-          <option value="Fantasy">Fantasy</option>
-          <option value="Sci-Fi">Sci-Fi</option>
-          <option value="Technology">Technology</option>
-          <option value="History">History</option>
-          <option value="Science">Science</option>
-          <option value="Outdoor Recreation">Outdoor Recreation</option>
-        </select>
+        <EditableCategory
+          placeholder="Choose a category"
+          options={categoryOptions}
+          value={state.category}
+          onChange={value => dispatch('UPDATE_CATEGORY', value)}
+        />
 
         <ul>
-          {state.subCategories.map((subCategory, index) => <li key={index}>{subCategory}</li>)}
-          <input type="text" value={subCategory} placeholder="Add a sub category" onChange={e => updateSubCategory(e.target.value)} />
-          <button
-            onClick={e => {
-              e.preventDefault();
-              dispatch('UPDATE_SUBCATEGORIES', [...state.subCategories, subCategory]);
-              updateSubCategory('');
-            }}
-          >
-            Save Sub Category
-          </button>
+          {state.subCategories.map((subCategory, index) => (
+            <EditableSubCategory
+              key={index}
+              placeholder="Sub-categories can not be empty"
+              value={subCategory}
+              _saveChanges={(newValue, originalValue) => dispatch('UPDATE_SUBCATEGORIES', updateValueInArray(state.subCategories, newValue, originalValue))}
+            />
+          ))}
+          <EditableSubCategory
+            special
+            submitType
+            placeholder="Add a new sub category"
+            _saveChanges={value => dispatch('UPDATE_SUBCATEGORIES', [...state.subCategories, value])}
+          />
         </ul>
 
         <input
