@@ -90,13 +90,13 @@ function renderedList(lists, service) {
       {lists.map((list, index) => (
         <ListBox key={index}>
           <h2>{`Top ${list.size} ${list.title}`}</h2>
-          <span>
+          <section>
             <button onClick={() => service.send('t_CREATE_LIST')}>
               <i className="material-icons">
                 edit
               </i>
             </button>
-          </span>
+          </section>
           <h4>Categories</h4>
           <ul>
             <CategoryLabel primary tabIndex="0" role="combobox">{list.category}</CategoryLabel>
@@ -147,7 +147,7 @@ const ListBox = styled.li`
     color: inherit;
     grid-area: categories-heading;
   }
-  span {
+  section {
     display: flex;
     justify-content: flex-end;
     align-items: flex-start;

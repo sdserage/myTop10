@@ -10,7 +10,7 @@ export default function EditableSubCategory(props) {
   const { value, updateValue, originalValue, setNewOriginalValue } = useMnemonicString(props.value);
   const size = value.length || props.placeholder.length;
   return (
-    <SubCategory value={value} special={props.special}>
+    <SubCategory value={value} special={props.special} submitType={props.submitType}>
       <Condition condition={props.submitType}>
         <i className="material-icons">
           add_circle_outline

@@ -131,26 +131,42 @@ export default function NewList(props) {
   function dispatch(type, payload) {
     updateState(reducer(state, {type, payload}));
   }
-  
+  const listSizePlaceholder = "Please enter a non negative whole number";
+  const listSizeSize = String(state.size).length || listSizePlaceholder.length;
+  const titlePlaceholder = "(Enter title here)";
+  const titleSize = state.title.length || titlePlaceholder.length;
   console.log("Current state: ", state);
   return (
     <PageWrapper>
       <h1>New List</h1>
-      <form>
-        <input
-          type="text"
-          placeholder="Title"
-          value={state.title}
-          onChange={e => dispatch('UPDATE_TITLE', e.target.value)}
-        />
-        <EditableCategory
-          placeholder="Choose a category"
-          options={categoryOptions}
-          value={state.category}
-          onChange={value => dispatch('UPDATE_CATEGORY', value)}
-        />
-
+      <ListBox>
+        <h2>
+          Top&nbsp;
+          <input
+            type="text"
+            placeholder={listSizePlaceholder}
+            value={state.size}
+            onChange={e => dispatch('UPDATE_SIZE', e.target.value)}
+            size={listSizeSize}
+          />
+          &nbsp;
+          <input
+            type="text"
+            placeholder={titlePlaceholder}
+            value={state.title}
+            onChange={e => dispatch('UPDATE_TITLE', e.target.value)}
+            size={titleSize}
+          />
+        </h2>
+        <section></section>
+        <h4>Categories</h4>
         <ul>
+          <EditableCategory
+            placeholder="Choose a primary category"
+            options={categoryOptions}
+            value={state.category}
+            onChange={value => dispatch('UPDATE_CATEGORY', value)}
+          />
           {state.subCategories.map((subCategory, index) => (
             <EditableSubCategory
               key={index}
@@ -167,21 +183,7 @@ export default function NewList(props) {
           />
         </ul>
 
-        <input
-          type='text'
-          pattern="\d*"
-          value={state.size}
-          onChange={e => dispatch('UPDATE_SIZE', Number(e.target.value))}
-        />
-
-        <EditableSubCategory
-          primary
-          placeholder="Enter Sub Category"
-          value={state.test}
-          _saveChanges={value => dispatch('UPDATE_TEST', value)}
-        />
-
-      </form>
+      </ListBox>
     </PageWrapper>
   );
 }
@@ -190,7 +192,7 @@ const SubCategoriesContainer = styled.ul`
   
 `;
 
-const ListBox = styled.li`
+const ListBox = styled.form`
   border: ${props => props.theme.darkColor} solid 2px;
   border-radius: 5px;
   color: ${props => props.theme.darkColor};
@@ -204,16 +206,28 @@ const ListBox = styled.li`
   ;
   align-content: start;
   h2 {
-    font-weight: bold;
     color: inherit;
-    margin-bottom: ${props => props.theme._spacer()};
     grid-area: title;
+    font-size: 1.5em;
+    font-weight: bold;
+    input {
+      font-weight: inherit;
+      font-size: inherit;
+      background-color: transparent;
+      border: none;
+      color: inherit;
+      margin-bottom: ${props => props.theme._spacer()};
+      outline: none;
+    }
+    input::placeholder {
+      color: ${props => props.theme.mediumColor};
+    }
   }
   h4 {
     color: inherit;
     grid-area: categories-heading;
   }
-  span {
+  section {
     display: flex;
     justify-content: flex-end;
     align-items: flex-start;
@@ -264,42 +278,6 @@ const ListBoxSpecial = styled(ListBox)`
   &:hover, &:focus-within {
     background-color: ${props => props.theme.lightColor};
     color: ${props => props.theme.lightestColor};
-  }
-`;
-
-const CategoryLabel = styled.li`
-  cursor: pointer;
-  padding: ${props => props.theme._spacer()};
-  background-color: ${props => props.primary ? props.theme.lightColor : props.theme.mediumColor};
-  color: ${props => props.theme.lightestColor};
-  border: ${props => props.primary ? props.theme.lightColor : props.theme.mediumColor} 1px solid; 
-  display: inline-block;
-  margin: ${props => props.theme._spacer()} ${props => props.theme._spacer()} 0 0;
-  border-radius: 5px;
-  box-shadow: 2px 2px 5px ${props => props.theme.mediumColor};
-  max-height: 39px;
-  text-align: center;
-  outline: none;
-  &:hover, &:focus {
-    background-color: ${props => props.theme.lightestColor};
-    color: ${props => props.primary ? props.theme.lightColor : props.theme.mediumColor};
-  }
-`;
-
-const CategoryLabelSpecial = styled(CategoryLabel)`
-  background-color: ${props => props.theme.lightColor};
-  border: ${props => props.theme.lightColor} 1px solid; 
-  position: relative;
-  i {
-    position: relative;
-    color: inherit;
-    font-size: 16px;
-    justify-self: flex-end;
-    margin-right: ${props => props.theme._spacer(0.5)};
-    top: 3px;
-  }
-  &:hover, &:focus {
-    color: ${props => props.theme.lightColor};
   }
 `;
 

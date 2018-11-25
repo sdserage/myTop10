@@ -3,9 +3,9 @@ import styled from 'styled-components';
 const SubCategory = styled.li`
   position: relative;
   padding: ${props => props.theme._spacer()};
-  background-color: ${props => props.special ? props.theme.lightColor : props.theme.mediumColor};
+  background-color: ${props => props.theme.mediumColor};
   color: ${props => props.theme.lightestColor};
-  border: ${props => props.special ? props.theme.lightColor : props.theme.mediumColor} 1px solid; 
+  border: ${props => props.theme.mediumColor} 1px solid; 
   display: inline-block;
   margin: ${props => props.theme._spacer()} ${props => props.theme._spacer()} 0 0;
   border-radius: 5px;
@@ -15,7 +15,7 @@ const SubCategory = styled.li`
   outline: none;
   i {
     position: relative;
-    color: ${props => props.value ? 'inherit' : props.theme.darkColor};
+    color: ${props => props.value ? 'inherit' : props.submitType ? 'inherit' : props.theme.darkColor};
     font-size: inherit;
     top: 2px;
   }
@@ -33,7 +33,7 @@ const SubCategory = styled.li`
     }
   }
   button:hover {
-    color: ${props => props.special ? props.theme.mediumColor : props.theme.lightColor};
+    color: ${props => props.theme.lightColor};
   }
   input {
     background: transparent;
@@ -43,11 +43,11 @@ const SubCategory = styled.li`
     color: inherit;
   }
   input::placeholder {
-    color: ${props => props.theme.darkColor};
+    color: ${props => props.submitType ? 'inherit' : props.theme.darkColor};
   }
   &:hover, &:focus, &:focus-within {
     background-color: ${props => props.theme.lightestColor};
-    color: ${props => props.special ? props.theme.lightColor : props.theme.mediumColor};
+    color: ${props => props.theme.mediumColor};
   }
 `;
 
