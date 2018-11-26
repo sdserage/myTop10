@@ -132,24 +132,29 @@ export default function NewList(props) {
     updateState(reducer(state, {type, payload}));
   }
   const listSizePlaceholder = "Please enter a non negative whole number";
-  const listSizeSize = String(state.size).length || listSizePlaceholder.length;
   const titlePlaceholder = "(Enter title here)";
   const titleSize = state.title.length || titlePlaceholder.length;
   console.log("Current state: ", state);
   return (
     <PageWrapper>
       <h1>New List</h1>
-      <ListBox>
+      <ListBox size={String(state.size).length || listSizePlaceholder.length}>
         <h2>
           Top&nbsp;
           <input
-            type="text"
+            type="number"
             placeholder={listSizePlaceholder}
             value={state.size}
-            onChange={e => dispatch('UPDATE_SIZE', e.target.value)}
-            size={listSizeSize}
+            onChange={e => {
+              let cleanedValue = e.target.value.split('-').join('').split('.').join('');
+              if (Number(cleanedValue) < 2) {
+                cleanedValue = 2;
+              }
+              dispatch('UPDATE_SIZE', Number(cleanedValue));
+            }}
+            min="2"
+            step="1"
           />
-          &nbsp;
           <input
             type="text"
             placeholder={titlePlaceholder}
@@ -218,9 +223,17 @@ const ListBox = styled.form`
       color: inherit;
       margin-bottom: ${props => props.theme._spacer()};
       outline: none;
+      border-radius: 5px;
+    }
+    input:first-child {
+      width: ${props => props.size * 22}px;
     }
     input::placeholder {
       color: ${props => props.theme.mediumColor};
+    }
+    input:hover, input:focus {
+      background: ${props => props.theme.lightestColor};
+      color: ${props => props.theme.lightColor}
     }
   }
   h4 {
