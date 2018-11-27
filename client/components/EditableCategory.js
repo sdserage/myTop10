@@ -12,8 +12,7 @@ export default function EditableCategory(props) {
     value => console.log('Save changes not implemented. Passed value: ', value);
   const { value, updateValue, originalValue, setNewOriginalValue } = useMnemonicString(props.value);
   const size = value.length || props.placeholder.length;
-  console.log('selectEl: ', selectEl);
-
+  // console.log('selectEl: ', selectEl);
   return (
     <Category
       value={value}

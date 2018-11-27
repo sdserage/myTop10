@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { Machine } from 'xstate';
 import { interpret } from 'xstate/lib/interpreter';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useReducer } from 'react';
 import useStateMachine from '../../util/useStateMachine';
 import PageWrapper from '../../components/styledComponents/PageWrapper';
 import Router from 'next/router';
@@ -13,22 +13,25 @@ import { Query } from 'react-apollo';
 import { gql_GET_LISTS } from '../../graphQL/queries';
 
 const categoryOptions = [
-  'Sports',
-  'TV Shows',
-  'Literature',
-  'Health',
-  'Gaming',
   'Animals',
-  'Music',
-  'Food',
-  'Hobbies',
-  'Nature',
+  'Exercise',
   'Fantasy',
-  'Sci-Fi',
-  'Technology',
+  'Fashion',
+  'Food',
+  'Gaming',
   'History',
-  'Science',
+  'Health',
+  'Hobbies',
+  'Literature',
+  'Movies',
+  'Music',
+  'Nature',
   'Outdoor Recreation',
+  'Sci-Fi',
+  'Science',
+  'Sports',
+  'Technology',
+  'TV Shows',
 ];
 
 const modeMachine = Machine(
@@ -84,9 +87,20 @@ const modeMachine = Machine(
   },
 );
 
+const initialState = {
+  title: '',
+  category: '',
+  subCategories: [],
+  size: 10,
+  items: [],
+  test: 'test',
+};
+
 function reducer(state, { type, payload }) {
-  console.log(state, type, payload)
+  // console.log(state, type, payload)
   switch (type) {
+    case 'CANCEL_CREATE':
+      return initialState;
     case 'UPDATE_TITLE':
       return {...state, title: payload};
     case 'UPDATE_CATEGORY':
@@ -105,8 +119,8 @@ function reducer(state, { type, payload }) {
 }
 
 function updateValueInArray(array, newValue, originalValue) {
-  console.log('newValue: ', newValue);
-  console.log('originalValue: ', originalValue);
+  // console.log('newValue: ', newValue);
+  // console.log('originalValue: ', originalValue);
   const desiredIndex = array.findIndex(arrayElement => arrayElement === originalValue);
   if (desiredIndex < 0) {
     return array;
@@ -117,20 +131,9 @@ function updateValueInArray(array, newValue, originalValue) {
 }
 
 export default function NewList(props) {
-  const [ state, updateState ] = useState({
-    title: '',
-    category: '',
-    subCategories: [],
-    size: 10,
-    items: [],
-    test: 'test',
-  });
-  const [subCategory, updateSubCategory] = useState('');
-  const [item, updateItem] = useState({});
-
-  function dispatch(type, payload) {
-    updateState(reducer(state, {type, payload}));
-  }
+  const [ state, dispatch ] = useReducer(reducer, initialState);
+  const [ subCategory, updateSubCategory ] = useState('');
+  const [ item, updateItem ] = useState({});
   const listSizePlaceholder = "Please enter a non negative whole number";
   const titlePlaceholder = "(Enter title here)";
   const titleSize = state.title.length || titlePlaceholder.length;
@@ -150,7 +153,7 @@ export default function NewList(props) {
               if (Number(cleanedValue) < 2) {
                 cleanedValue = 2;
               }
-              dispatch('UPDATE_SIZE', Number(cleanedValue));
+              dispatch({type: 'UPDATE_SIZE', payload: Number(cleanedValue)});
             }}
             min="2"
             step="1"
@@ -159,7 +162,7 @@ export default function NewList(props) {
             type="text"
             placeholder={titlePlaceholder}
             value={state.title}
-            onChange={e => dispatch('UPDATE_TITLE', e.target.value)}
+            onChange={e => dispatch({type: 'UPDATE_TITLE', payload: e.target.value})}
             size={titleSize}
           />
         </h2>
@@ -170,21 +173,28 @@ export default function NewList(props) {
             placeholder="Choose a primary category"
             options={categoryOptions}
             value={state.category}
-            onChange={value => dispatch('UPDATE_CATEGORY', value)}
+            onChange={value => dispatch({type: 'UPDATE_CATEGORY', payload: value})}
           />
           {state.subCategories.map((subCategory, index) => (
             <EditableSubCategory
               key={index}
               placeholder="Sub-categories can not be empty"
               value={subCategory}
-              _saveChanges={(newValue, originalValue) => dispatch('UPDATE_SUBCATEGORIES', updateValueInArray(state.subCategories, newValue, originalValue))}
+              _saveChanges={(newValue, originalValue) => dispatch({
+                type: 'UPDATE_SUBCATEGORIES',
+                payload: updateValueInArray(
+                  state.subCategories,
+                  newValue,
+                  originalValue,
+                ),
+              })}
             />
           ))}
           <EditableSubCategory
             special
             submitType
             placeholder="Add a new sub category"
-            _saveChanges={value => dispatch('UPDATE_SUBCATEGORIES', [...state.subCategories, value])}
+            _saveChanges={value => dispatch({type: 'UPDATE_SUBCATEGORIES', payload: [...state.subCategories, value]})}
           />
         </ul>
 
