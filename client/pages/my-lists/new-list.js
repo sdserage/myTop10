@@ -5,6 +5,7 @@ import { useState, useEffect, useReducer } from 'react';
 import useStateMachine from '../../util/useStateMachine';
 import PageWrapper from '../../components/styledComponents/PageWrapper';
 import Router from 'next/router';
+import EditableListTitle from '../../components/EditableTitle';
 import EditableSubCategory from '../../components/EditableSubCategory';
 import EditableCategory from '../../components/EditableCategory';
 import Condition from '../../components/Condition';
@@ -57,6 +58,7 @@ const modeMachine = Machine(
       },
       sendingList: {
         on: {
+          t_CANCEL_SEND: 'createList',
           t_CREATED_LIST_SUCCESS: 'viewLists',
           t_CREATED_LIST_FAILURE: {
             target: 'createList',
@@ -119,8 +121,6 @@ function reducer(state, { type, payload }) {
 }
 
 function updateValueInArray(array, newValue, originalValue) {
-  // console.log('newValue: ', newValue);
-  // console.log('originalValue: ', originalValue);
   const desiredIndex = array.findIndex(arrayElement => arrayElement === originalValue);
   if (desiredIndex < 0) {
     return array;
@@ -134,38 +134,16 @@ export default function NewList(props) {
   const [ state, dispatch ] = useReducer(reducer, initialState);
   const [ subCategory, updateSubCategory ] = useState('');
   const [ item, updateItem ] = useState({});
-  const listSizePlaceholder = "Please enter a non negative whole number";
-  const titlePlaceholder = "(Enter title here)";
-  const titleSize = state.title.length || titlePlaceholder.length;
+
   console.log("Current state: ", state);
   return (
     <PageWrapper>
       <h1>New List</h1>
       <ListBox size={String(state.size).length || listSizePlaceholder.length}>
-        <h2>
-          Top&nbsp;
-          <input
-            type="number"
-            placeholder={listSizePlaceholder}
-            value={state.size}
-            onChange={e => {
-              let cleanedValue = e.target.value.split('-').join('').split('.').join('');
-              if (Number(cleanedValue) < 2) {
-                cleanedValue = 2;
-              }
-              dispatch({type: 'UPDATE_SIZE', payload: Number(cleanedValue)});
-            }}
-            min="2"
-            step="1"
-          />
-          <input
-            type="text"
-            placeholder={titlePlaceholder}
-            value={state.title}
-            onChange={e => dispatch({type: 'UPDATE_TITLE', payload: e.target.value})}
-            size={titleSize}
-          />
-        </h2>
+        <EditableListTitle
+          size={state.size}
+          title={state.title}
+        />
         <section></section>
         <h4>Categories</h4>
         <ul>
@@ -220,32 +198,6 @@ const ListBox = styled.form`
     "categories categories categories"
   ;
   align-content: start;
-  h2 {
-    color: inherit;
-    grid-area: title;
-    font-size: 1.5em;
-    font-weight: bold;
-    input {
-      font-weight: inherit;
-      font-size: inherit;
-      background-color: transparent;
-      border: none;
-      color: inherit;
-      margin-bottom: ${props => props.theme._spacer()};
-      outline: none;
-      border-radius: 5px;
-    }
-    input:first-child {
-      width: ${props => props.size * 22}px;
-    }
-    input::placeholder {
-      color: ${props => props.theme.mediumColor};
-    }
-    input:hover, input:focus {
-      background: ${props => props.theme.lightestColor};
-      color: ${props => props.theme.lightColor}
-    }
-  }
   h4 {
     color: inherit;
     grid-area: categories-heading;
